@@ -95,7 +95,7 @@ var FragShaderSource = `
     void main() {
 
         // TODO 1: Set gl_FragColor to black instead of white
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
         // TODO 3.7: Set gl_FragColor to the interpolated value passed
         // in from the rasterizer.
