@@ -75,8 +75,10 @@ var VertShaderSource = `
 
     attribute vec3 Position;
     // TODO 3.3: Declare the Color attribute.
+    attribute vec3 Color;
 
     // TODO 3.4: Declare a varying called vColor
+    varying vec4 vColor;
 
     void main() {
 
@@ -85,18 +87,19 @@ var VertShaderSource = `
         gl_Position = Matrix * vec4(Position, 1.0);
 
         // TODO 3.5: Store the color attribute's value in the color varying
-
+        vColor = vec4(Color, 1.0);
     }
 `;
 var FragShaderSource = `
     precision highp float; // use highest available precision for floats
 
     // TODO 3.6: Declare the varying for color
+    varying vec4 vColor;
 
     void main() {
 
         // TODO 1: Set gl_FragColor to black instead of white
-        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        gl_FragColor = vColor;
 
         // TODO 3.7: Set gl_FragColor to the interpolated value passed
         // in from the rasterizer.
@@ -114,6 +117,7 @@ var Triangle = function(gl, vertexPositions, vertexColors, indices, vertexSource
     this.indexIbo = createIndexBuffer(gl, indices);
 
     // TODO 3.1 - create a vertex buffer for the color data contained in vertexColors
+    this.colorVbo = createVertexBuffer(gl, vertexColors);
 
     // Create the shader program that will render the triangle
     this.shaderProgram = createShaderProgram(gl, vertexSource, fragmentSource);
@@ -145,6 +149,14 @@ Triangle.prototype.render = function(gl, matrix) {
     }
 
     // TODO 3.2: Bind the color VBO and link it to the Color attribute
+    // OpenGL boiler plate: link color attribute and buffer correctly
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.colorVbo);
+
+    var colorAttrib = gl.getAttribLocation(this.shaderProgram, "Color");
+    if (colorAttrib >= 0) {
+        gl.enableVertexAttribArray(colorAttrib);
+        gl.vertexAttribPointer(colorAttrib, 3, gl.FLOAT, false, 0, 0);
+    }
 
     // Draw the triangle!
     gl.drawElements(gl.TRIANGLES, this.indexCount, gl.UNSIGNED_SHORT, 0);
