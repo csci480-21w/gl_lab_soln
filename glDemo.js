@@ -71,6 +71,7 @@ function createIndexBuffer(gl, indexData) {
 /////////////////////////////////
 var VertShaderSource = `
     // TODO 2.2: Declare the uniform variable Matrix as a mat4 here:
+    uniform mat4 Matrix;
 
     attribute vec3 Position;
     // TODO 3.3: Declare the Color attribute.
@@ -81,7 +82,7 @@ var VertShaderSource = `
 
         // TODO 2.3: Change the following line so the gl_Position
         // gets the product of Matrix and the Position attribute
-        gl_Position = vec4(Position, 1.0);
+        gl_Position = Matrix * vec4(Position, 1.0);
 
         // TODO 3.5: Store the color attribute's value in the color varying
 
@@ -129,8 +130,8 @@ Triangle.prototype.render = function(gl, matrix) {
     // TODO 2.1 - uncomment these two lines of code to pass the matrix to the
     // shader as a uniform. The matrix is transposed to convert from row-major
     // to column-major.
-    //var Matrix_loc = gl.getUniformLocation(this.shaderProgram, "Matrix");
-    //gl.uniformMatrix4fv(Matrix_loc, false, matrix.transpose().m);
+    var Matrix_loc = gl.getUniformLocation(this.shaderProgram, "Matrix");
+    gl.uniformMatrix4fv(Matrix_loc, false, matrix.transpose().m);
 
     // Bind the vertex and index buffers with our triangle positions
     gl.bindBuffer(gl.ARRAY_BUFFER, this.positionVbo);
@@ -189,7 +190,7 @@ glDemo.prototype.render = function(canvas, gl, w, h)
 
     // TODO 2.4: Adjust the translation component to make the triangle
     // fit back inside the canvas.
-    matrix.m = [1.5, 0.0, 0.0, 0.0,
+    matrix.m = [1.5, 0.0, 0.0,-0.2,
                 0.0, 1.5, 0.0, 0.0,
                 0.0, 0.0, 1.5, 0.0,
                 0.0, 0.0, 0.0, 1.0];
